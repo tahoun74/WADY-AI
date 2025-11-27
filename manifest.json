@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Wady - Send to Dashboard",
+  "version": "1.0.0",
+  "description": "Send orders from WhatsApp Web directly to your Wady Inbox.",
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "activeTab",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://*.wady.ai/*",
+    "https://web.whatsapp.com/*",
+    "*://*/*"
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Wady Dashboard"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "https://picsum.photos/16/16",
+    "48": "https://picsum.photos/48/48",
+    "128": "https://picsum.photos/128/128"
+  }
+}
