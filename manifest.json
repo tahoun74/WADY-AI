@@ -29,10 +29,5 @@
       "js": ["content.js"],
       "run_at": "document_idle"
     }
-  ],
-  "icons": {
-    "16": "https://picsum.photos/16/16",
-    "48": "https://picsum.photos/48/48",
-    "128": "https://picsum.photos/128/128"
-  }
+  ]
 }

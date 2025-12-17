@@ -1,4 +1,15 @@
-import { ExtensionMessage, MessageType, STORAGE_KEY } from './types';
+// Inline types to avoid import issues in content scripts
+enum MessageType {
+  SAVE_TOKEN = 'SAVE_TOKEN',
+  GET_CONTEXT = 'GET_CONTEXT',
+  CONTEXT_RESULT = 'CONTEXT_RESULT',
+  SHOW_NOTIFICATION = 'SHOW_NOTIFICATION'
+}
+
+interface ExtensionMessage {
+  type: MessageType;
+  payload?: any;
+}
 
 declare var chrome: any;
 

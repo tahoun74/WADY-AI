@@ -16,12 +16,18 @@ export default defineConfig({
         content: resolve(__dirname, 'content.ts'),
       },
       output: {
-        entryFileNames: '[name].js',
+        entryFileNames: (chunkInfo) => {
+          // Use IIFE for content and background scripts to avoid import statements
+          return '[name].js';
+        },
         chunkFileNames: '[name].js',
-        assetFileNames: '[name].[ext]'
+        assetFileNames: '[name].[ext]',
+        inlineDynamicImports: false,
+        manualChunks: undefined,
       }
     },
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    modulePreload: false,
   }
 });

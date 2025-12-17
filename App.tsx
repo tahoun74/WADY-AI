@@ -46,8 +46,21 @@ const App: React.FC = () => {
   }, []);
 
   const handleConnect = () => {
-    // Open the Wady Dashboard linking page
-    window.open('https://dashboard.wady.ai/extension/link', '_blank');
+    // Mock authentication for testing (remove this when you have a real dashboard)
+    const mockAuthData: ExtensionTokenData = {
+      token: 'mock-token-' + Date.now(),
+      supplierId: 'SUPPLIER-' + Math.floor(Math.random() * 10000),
+      expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days from now
+    };
+    
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ [STORAGE_KEY]: mockAuthData }, () => {
+        setAuthData(mockAuthData);
+      });
+    }
+    
+    // TODO: Replace with real authentication
+    // window.open('https://dashboard.wady.ai/extension/link', '_blank');
   };
 
   const handleLogout = () => {
