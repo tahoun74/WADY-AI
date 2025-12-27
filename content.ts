@@ -91,3 +91,68 @@ function extractWhatsAppContext() {
     return {};
   }
 }
+
+
+// content.ts
+// declare const chrome: any;
+
+chrome.runtime.onMessage.addListener((msg: any, _sender: any, sendResponse: any) => {
+  if (msg?.type === "GET_WA_PHONE") {
+    const phone = extractPhoneBestEffort();
+    sendResponse({ phone });
+    return true;
+  }
+});
+
+/**
+ * WhatsApp Web DOM changes a lot.
+ * This is best-effort and will NOT work 100% of the time.
+ * If it returns null, background will ask user to type the phone.
+ */
+function extractPhoneBestEffort(): string | null {
+  try {
+    const textCandidates: string[] = [];
+
+    // 1) Chat header area (sometimes contains phone)
+    // Different WA builds: try common containers
+    const header = document.querySelector("header");
+    if (header) textCandidates.push(header.textContent || "");
+
+    // 2) If contact info drawer is open, it often contains phone text
+    const sidePanel = document.querySelector('[data-testid="drawer-right"]');
+    if (sidePanel) textCandidates.push(sidePanel.textContent || "");
+
+    // 3) Some builds store phone in title/aria-label of elements near header
+    const clickableTitle =
+      document.querySelector('header [title]') ||
+      document.querySelector('header [aria-label]');
+
+    if (clickableTitle) {
+      const t = (clickableTitle.getAttribute("title") || clickableTitle.getAttribute("aria-label") || "").trim();
+      if (t) textCandidates.push(t);
+    }
+
+    // Extract first phone-like match
+    for (const t of textCandidates) {
+      const p = findPhoneInText(t);
+      if (p) return p;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function findPhoneInText(t: string): string | null {
+  // Matches like +974 1234 5678 / +974-31383698 / 31383698 etc.
+  const m = t.match(/(\+\d{1,3}[\s-]?)?(\d[\d\s-]{6,}\d)/);
+  if (!m) return null;
+
+  const raw = m[0];
+  // Normalize: keep + and digits only
+  const norm = raw.replace(/[^\d+]/g, "");
+  if (norm.length < 7) return null;
+
+  return norm;
+}
