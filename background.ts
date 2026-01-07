@@ -3,9 +3,13 @@ declare const chrome: any;
 
 const MENU_ID = "send-whatsapp-order";
 
-// Change this to your real API base URL
-const API_BASE_URL = "http://localhost:8000";
-const API_PATH = "/api/v1/whatsapp/email"; // the route you will add in backend
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_PATH = import.meta.env.VITE_API_WHATSAPP_ROUTE;
+
+if (!API_BASE_URL || !API_PATH) {
+  throw new Error("API environment variables are not defined");
+}
+
 
 type PhoneResult = { phone?: string };
 
